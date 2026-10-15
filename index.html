@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confess Lah</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0b0b10;
+    font-family: "Caveat", "Segoe Script", "Bradley Hand", cursive;
+    overflow: hidden;
+  }
+
+  /* ===== Kertas ===== */
+  .paper {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+    overflow: hidden;
+    background:
+      /* garis buku */
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0, transparent 61px,
+        rgba(80, 150, 190, .55) 61px, rgba(80, 150, 190, .55) 63px
+      ),
+      /* noise halus */
+      radial-gradient(circle at 30% 20%, #cfcfcf 0%, #9c9c9c 60%, #7d7d7d 100%);
+  }
+  .paper::after { /* butiran kertas */
+    content: "";
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(rgba(0,0,0,.18) 1px, transparent 1px),
+      radial-gradient(rgba(255,255,255,.18) 1px, transparent 1px);
+    background-size: 5px 5px, 7px 7px;
+    background-position: 0 0, 2px 3px;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 36px;
+    text-align: center;
+    font-size: clamp(3rem, 9vw, 7.5rem);
+    line-height: 1.15;
+    font-weight: 700;
+    color: #12256b;
+    opacity: 0;
+    transform: rotate(-3deg);
+    pointer-events: none;
+  }
+  .slide span {
+    display: inline-block;
+    /* efek ditulis dari kiri ke kanan */
+    clip-path: inset(0 100% 0 0);
+  }
+  .slide.merah { color: #c0151f; }
+
+  .slide.aktif {
+    opacity: 1;
+    animation: masuk .35s ease-out forwards;
+  }
+  .slide.aktif span {
+    animation: tulis var(--durasi, 1s) steps(24, end) forwards;
+  }
+  .slide.keluar {
+    opacity: 0;
+    transform: rotate(-3deg) translateX(-30px);
+    transition: opacity .5s ease, transform .5s ease;
+  }
+
+  @keyframes tulis { to { clip-path: inset(0 0 0 0); } }
+  @keyframes masuk {
+    from { opacity: 0; transform: rotate(-3deg) translateY(12px); }
+    to   { opacity: 1; transform: rotate(-3deg) translateY(0); }
+  }
+
+  .heart { display: inline-block; animation: detak 1s infinite; }
+  @keyframes detak {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.35); }
+  }
+
+  
+  .btn {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 14px 54px;
+    font-family: system-ui, "Segoe UI", sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #fff;
+    background: #12256b;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    z-index: 5;
+    box-shadow: 0 0 0 0 rgba(18, 37, 107, .6);
+    animation: pulse 2s infinite;
+    transition: opacity .5s ease, transform .4s ease;
+  }
+  .btn:hover { transform: translate(-50%, -50%) scale(1.07); }
+  .btn.hide {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(.6);
+    pointer-events: none;
+    animation: none;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(18, 37, 107, .55); }
+    70%  { box-shadow: 0 0 0 22px rgba(18, 37, 107, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(18, 37, 107, 0); }
+  }
+
+  .btn.ulang {
+    top: auto; bottom: 22px;
+    transform: translate(-50%, 0);
+    padding: 8px 24px;
+    font-size: .85rem;
+    letter-spacing: 1px;
+    background: rgba(18, 37, 107, .85);
+    animation: none;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .btn.ulang.show { opacity: 1; pointer-events: auto; }
+  .btn.ulang:hover { transform: translate(-50%, 0) scale(1.07); }
+
+  /* Progress titik */
+  .dots {
+    position: absolute;
+    top: 14px; left: 0; right: 0;
+    display: flex; justify-content: center; gap: 6px;
+    z-index: 4;
+  }
+  .dots i {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(0, 0, 0, .25);
+    transition: background .3s, transform .3s;
+  }
+  .dots i.on { background: #12256b; transform: scale(1.3); }
+</style>
+</head>
+<body>
+
+<div class="paper" id="paper">
+  <div class="dots" id="dots"></div>
+  <button class="btn" id="btnMulai">MULAI</button>
+  <button class="btn ulang" id="btnUlang">↻ Ulangi</button>
+</div>
+
+
+<audio id="lagu" src="rabbit.mp3" preload="auto" loop></audio>
+
+<script>
+  
+  const slides = [
+    { t: "I met" },
+    { t: "a girl" },
+    { t: "with" },
+    { t: "a beautiful heart," },
+    { t: "beautiful eyes," },
+    { t: "beautiful smile," },
+    { t: "beautiful soul...," },
+    { t: "and" },
+    { t: "unforgettable charm." },
+    { t: "Who is that girl?" },
+    { t: "She is you ", merah: true, heart: true }
+  ];
+
+  const TAHAN = 1400;   
+  const AKHIR = 1000;   
+
+  const paper = document.getElementById("paper");
+  const btnMulai = document.getElementById("btnMulai");
+  const btnUlang = document.getElementById("btnUlang");
+  const dots = document.getElementById("dots");
+  let timers = [];
+  let els = [];
+
+  
+  slides.forEach((s, i) => {
+    const el = document.createElement("div");
+    el.className = "slide" + (s.merah ? " merah" : "");
+    const dur = s.dur || Math.max(.7, s.t.length * 0.07);
+    el.style.setProperty("--durasi", dur + "s");
+    el.innerHTML = "<span>" + s.t + (s.heart ? '<b class="heart">♥</b>' : "") + "</span>";
+    paper.insertBefore(el, btnMulai);
+    els.push({ el, dur });
+
+    const d = document.createElement("i");
+    dots.appendChild(d);
+  });
+
+  function setDot(i) {
+    [...dots.children].forEach((d, k) => d.classList.toggle("on", k === i));
+  }
+
+  const lagu = document.getElementById("lagu");
+  const VOLUME = 0.8;      
+  const MULAI_DETIK = 0;   
+  let fadeTimer;
+
+  function putarLagu() {
+    clearInterval(fadeTimer);
+    lagu.currentTime = MULAI_DETIK;
+    lagu.volume = 0;
+    lagu.play().catch(() => {}); 
+    
+    fadeTimer = setInterval(() => {
+      if (lagu.volume < VOLUME - 0.05) lagu.volume = Math.min(VOLUME, lagu.volume + 0.05);
+      else { lagu.volume = VOLUME; clearInterval(fadeTimer); }
+    }, 150);
+  }
+
+  function hentikanLagu() {
+    clearInterval(fadeTimer);
+    lagu.pause();
+    lagu.currentTime = MULAI_DETIK;
+  }
+
+  function mulai() {
+    
+    const root = document.documentElement;
+    if (!document.fullscreenElement && root.requestFullscreen) {
+      root.requestFullscreen().catch(() => {});
+    }
+    putarLagu();
+    btnMulai.classList.add("hide");
+    btnUlang.classList.remove("show");
+
+    let waktu = 600;
+    els.forEach((o, i) => {
+      timers.push(setTimeout(() => {
+        // slide sebelumnya keluar
+        if (i > 0) {
+          els[i - 1].el.classList.remove("aktif");
+          els[i - 1].el.classList.add("keluar");
+        }
+        setDot(i);
+        o.el.classList.remove("keluar");
+        o.el.classList.add("aktif");
+      }, waktu));
+
+      const terakhir = i === els.length - 1;
+      waktu += o.dur * 1000 + (terakhir ? 0 : TAHAN) + (terakhir ? 0 : AKHIR - 1000 + 0);
+    });
+
+    timers.push(setTimeout(() => btnUlang.classList.add("show"), waktu + 1200));
+  }
+
+  function ulang() {
+    hentikanLagu();
+    timers.forEach(clearTimeout);
+    timers = [];
+    els.forEach(o => o.el.classList.remove("aktif", "keluar"));
+    setDot(-1);
+    btnUlang.classList.remove("show");
+    btnMulai.classList.remove("hide");
+  }
+
+  btnMulai.addEventListener("click", mulai);
+  btnUlang.addEventListener("click", ulang);
+</script>
+</body>
+</html>
