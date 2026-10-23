@@ -20,7 +20,7 @@
     color: #1c1c1c;
   }
 
-  /* ===== Hati melayang di latar ===== */
+  
   .bg-heart {
     position: fixed;
     bottom: -10vh;
@@ -37,7 +37,7 @@
     100% { transform: translateY(-115vh) rotate(25deg); opacity: 0; }
   }
 
-  /* ===== Kartu ===== */
+
   .card {
     position: relative;
     z-index: 2;
@@ -123,13 +123,13 @@
   }
   .dots i.on { background: #e11d2a; transform: scale(1.35); }
 
-  /* ===== Gaya garis doodle ===== */
+  
   .s { stroke: #1c1c1c; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
   .l { fill: #fff; stroke: #1c1c1c; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
   .n { fill: none; stroke: #1c1c1c; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
   .k { fill: #1c1c1c; }
 
-  /* ===== Animasi karakter ===== */
+  
   .bob, .bob2, .float, .pop, .jump, .tremble, .sob, .sway, .drip, .rain, .ray, .dot, .ring, .vib, .glow {
     transform-box: fill-box;
     transform-origin: center;
@@ -164,7 +164,7 @@
   @keyframes ring   { 0% { opacity: 1; } 50% { opacity: 0; } }
   @keyframes glow   { 0%,100% { fill: #bfe3ff; } 50% { fill: #fff3a8; } }
 
-  /* ===== Tombol ===== */
+  
   .btn {
     position: fixed;
     left: 50%; top: 50%;
@@ -210,7 +210,7 @@
 </head>
 <body>
 
-<!-- filter supaya garis terlihat seperti coretan tangan -->
+
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <filter id="coret">
     <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="7" result="n"/>
@@ -232,13 +232,11 @@
 
 <button class="btn ulang" id="btnUlang">↻ Ulangi</button>
 
-<!-- Browser TIDAK bisa memutar .mid. Pakai MP3, taruh satu folder dengan file html ini -->
+
 <audio id="lagu" src="rabbit.mp3" preload="auto" loop></audio>
 
 <script>
-  // ============================================================
-  //  PEMBANTU GAMBAR (karakter doodle)
-  // ============================================================
+  
   const HEARTPATH = "M0 -4 C-8 -16 -24 -4 0 14 C24 -4 8 -16 0 -4Z";
 
   const heart = (x, y, s, d, c = "#e53950") =>
@@ -255,7 +253,7 @@
 
   const BADAN = `<path class="l" d="M114 172 q-8 46 4 86 h64 q12 -40 4 -86"/>`;
 
-  // lengan + HP + tangan (HP di depan perut)
+  
   const MEGANG = (glow) =>
     `<path class="n" d="M116 186 q-10 26 18 42"/><path class="n" d="M184 186 q10 26 -18 42"/>
      <g transform="translate(150 216)">
@@ -264,13 +262,9 @@
      </g>
      <circle class="l" cx="136" cy="230" r="7"/><circle class="l" cx="164" cy="230" r="7"/>`;
 
-  const CY = 122; // tinggi pusat kepala untuk adegan yang memegang HP
+  const CY = 122; 
 
-  // ============================================================
-  //  ADEGAN
-  // ============================================================
-
-  // 1. Memikirkan kamu
+  
   const adegan1 = () => `
     ${SHADOW()}${BADAN}
     <path class="n" d="M104 160 q-12 24 8 38"/><path class="n" d="M196 160 q12 24 -8 38"/>
@@ -285,7 +279,7 @@
     </g>
     ${heart(62, 70, 1, 0)}${heart(242, 82, .9, .5)}${heart(262, 150, .7, 1)}`;
 
-  // 2. Tanpa kamu
+  
   const adegan2 = () => `
     ${SHADOW(262, 70)}
     <g class="bob2">
@@ -304,7 +298,7 @@
       <g class="drip"><path class="s" fill="#7cc4ff" d="M168 156 q-6 9 0 12 q6 -3 0 -12z"/></g>
     </g>`;
 
-  // 3. Ngobrol denganmu
+  
   const adegan3 = () => {
     const rays = [-165, -135, -105, -75, -45, -15].map((a, i) => {
       const r = a * Math.PI / 180;
@@ -326,7 +320,7 @@
       </g>`;
   };
 
-  // 4. Menunggu pesanmu
+  
   const adegan4 = () => `
     ${SHADOW()}${BADAN}${MEGANG(false)}
     <g class="bob">
@@ -341,7 +335,7 @@
     <circle class="k dot" cx="250" cy="48" r="4.5" style="animation-delay:.35s"/>
     <circle class="k dot" cx="264" cy="48" r="4.5" style="animation-delay:.7s"/>`;
 
-  // 5. Dapat notifikasi
+  
   const adegan5 = () => `
     <ellipse cx="150" cy="270" rx="64" ry="7" fill="#000" opacity=".08"/>
     <g class="jump">
@@ -362,7 +356,7 @@
       <circle cx="246" cy="76" r="3.2" fill="#e53950"/>
     </g>`;
 
-  // 6. Kamu berhenti membalas
+  
   const adegan6 = () => `
     ${SHADOW()}
     <g class="tremble">
@@ -376,7 +370,7 @@
     <g class="vib"><path class="n" d="M88 98 q-12 22 0 44"/><path class="n" d="M74 90 q-18 30 0 60"/></g>
     <g class="vib"><path class="n" d="M212 98 q12 22 0 44"/><path class="n" d="M226 90 q18 30 0 60"/></g>`;
 
-  // 7. Kamu mengabaikanku
+  
   const adegan7 = () => `
     <ellipse cx="150" cy="256" rx="110" ry="8" fill="#000" opacity=".08"/>
     <g class="sob">
@@ -393,26 +387,21 @@
     </g>
     ${heart(72, 98, .7, 0)}${heart(196, 82, .8, .7)}${heart(250, 130, .55, 1.2)}`;
 
-  // ============================================================
-  //  ISI CERITA — EDIT CAPTION DI SINI
-  // ============================================================
+  
   const adegan = [
     { t: "Me thinking about you",        svg: adegan1 },
     { t: "Me without you :",             svg: adegan2 },
     { t: "Me talking with you :",        svg: adegan3 },
     { t: "Me waiting for your message .", svg: adegan4 },
-    { t: "Me when I received a noti .",  svg: adegan5 },
+    { t: "Me when I received a notif .",  svg: adegan5 },
     { t: "Me when you stop talking .",   svg: adegan6 },
     { t: "Me when you ignored me .",     svg: adegan7 }
   ];
 
-  const TAHAN = 2800;  // lama adegan diam setelah caption selesai (ms)
-  const KETIK = 60;    // kecepatan mengetik per huruf (ms)
-  const GANTI = 450;   // lama transisi antar adegan (ms)
+  const TAHAN = 2800;  
+  const KETIK = 60;    
+  const GANTI = 450;   
 
-  // ============================================================
-  //  KONTROL
-  // ============================================================
   const card = document.getElementById("card");
   const isi = document.getElementById("isi");
   const cap = document.getElementById("cap");
@@ -430,7 +419,7 @@
   adegan.forEach(() => dots.appendChild(document.createElement("i")));
   const setDot = (i) => [...dots.children].forEach((d, k) => d.classList.toggle("on", k === i));
 
-  // hati melayang di latar
+  
   for (let i = 0; i < 16; i++) {
     const h = document.createElement("span");
     h.className = "bg-heart";
@@ -442,7 +431,7 @@
     document.body.appendChild(h);
   }
 
-  // ---------- musik ----------
+  
   const VOLUME = 0.8;      // 0 sampai 1
   const MULAI_DETIK = 0;   // lagu mulai dari detik ke berapa
 
@@ -462,7 +451,7 @@
     try { lagu.currentTime = MULAI_DETIK; } catch (e) {}
   }
 
-  // ---------- layar penuh ----------
+  
   function toggleFs() {
     const root = document.documentElement;
     if (!document.fullscreenElement) { if (root.requestFullscreen) root.requestFullscreen().catch(() => {}); }
@@ -470,7 +459,7 @@
   }
   btnFs.addEventListener("click", toggleFs);
 
-  // ---------- adegan ----------
+  
   function ketik(teks) {
     clearInterval(typer);
     let k = 0;
