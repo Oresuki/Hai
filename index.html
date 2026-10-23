@@ -3,279 +3,520 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Confess Lah</title>
+<title>This is me</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   html, body { height: 100%; }
 
   body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #0b0b10;
-    font-family: "Caveat", "Segoe Script", "Bradley Hand", cursive;
     overflow: hidden;
+    font-family: "Patrick Hand", "Segoe Print", "Comic Sans MS", cursive;
+    background: linear-gradient(135deg, #ffe4ec 0%, #ece7ff 50%, #def2ff 100%);
+    color: #1c1c1c;
   }
 
-  /* ===== Kertas ===== */
-  .paper {
+  /* ===== Hati melayang di latar ===== */
+  .bg-heart {
+    position: fixed;
+    bottom: -10vh;
+    color: #ff7b96;
+    opacity: .0;
+    pointer-events: none;
+    animation: naik linear infinite;
+    z-index: 0;
+  }
+  @keyframes naik {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10%  { opacity: .35; }
+    90%  { opacity: .35; }
+    100% { transform: translateY(-115vh) rotate(25deg); opacity: 0; }
+  }
+
+  /* ===== Kartu ===== */
+  .card {
     position: relative;
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
-    border-radius: 0;
-    overflow: hidden;
-    background:
-      /* garis buku */
-      repeating-linear-gradient(
-        to bottom,
-        transparent 0, transparent 61px,
-        rgba(80, 150, 190, .55) 61px, rgba(80, 150, 190, .55) 63px
-      ),
-      /* noise halus */
-      radial-gradient(circle at 30% 20%, #cfcfcf 0%, #9c9c9c 60%, #7d7d7d 100%);
-  }
-  .paper::after { /* butiran kertas */
-    content: "";
-    position: absolute; inset: 0;
-    background-image:
-      radial-gradient(rgba(0,0,0,.18) 1px, transparent 1px),
-      radial-gradient(rgba(255,255,255,.18) 1px, transparent 1px);
-    background-size: 5px 5px, 7px 7px;
-    background-position: 0 0, 2px 3px;
+    z-index: 2;
+    width: min(94vw, calc(94vh * 0.75));
+    aspect-ratio: 3 / 4;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 8px;
+    padding: 10px 12px 12px;
+    background: #f1f2f6;
+    border-radius: 22px;
+    box-shadow: 0 25px 70px rgba(80, 60, 140, .28), 0 4px 12px rgba(0, 0, 0, .08);
+    opacity: 0;
+    transform: scale(.85) translateY(30px);
     pointer-events: none;
-    mix-blend-mode: multiply;
+    transition: opacity .6s ease, transform .7s cubic-bezier(.2, .9, .2, 1.2);
   }
+  .card.tampil { opacity: 1; transform: none; pointer-events: auto; }
 
-
-  .slide {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 36px;
+  .label {
     text-align: center;
-    font-size: clamp(3rem, 9vw, 7.5rem);
-    line-height: 1.15;
+    font-family: system-ui, "Segoe UI", sans-serif;
     font-weight: 700;
-    color: #12256b;
-    opacity: 0;
-    transform: rotate(-3deg);
-    pointer-events: none;
-  }
-  .slide span {
-    display: inline-block;
-    /* efek ditulis dari kiri ke kanan */
-    clip-path: inset(0 100% 0 0);
-  }
-  .slide.merah { color: #c0151f; }
-
-  .slide.aktif {
-    opacity: 1;
-    animation: masuk .35s ease-out forwards;
-  }
-  .slide.aktif span {
-    animation: tulis var(--durasi, 1s) steps(24, end) forwards;
-  }
-  .slide.keluar {
-    opacity: 0;
-    transform: rotate(-3deg) translateX(-30px);
-    transition: opacity .5s ease, transform .5s ease;
+    font-size: clamp(.9rem, 2.2vh, 1.2rem);
+    color: #e11d2a;
+    padding: 4px 0 0;
   }
 
-  @keyframes tulis { to { clip-path: inset(0 0 0 0); } }
-  @keyframes masuk {
-    from { opacity: 0; transform: rotate(-3deg) translateY(12px); }
-    to   { opacity: 1; transform: rotate(-3deg) translateY(0); }
-  }
-
-  .heart { display: inline-block; animation: detak 1s infinite; }
-  @keyframes detak {
-    0%, 100% { transform: scale(1); }
-    50%      { transform: scale(1.35); }
-  }
-
-  
-  .btn {
+  .fs {
     position: absolute;
+    top: 8px; right: 10px;
+    width: 30px; height: 30px;
+    border: none;
+    border-radius: 50%;
+    background: #6b6d75;
+    color: #fff;
+    font-size: 15px;
+    line-height: 30px;
+    cursor: pointer;
+    opacity: .85;
+    transition: transform .2s, opacity .2s;
+  }
+  .fs:hover { transform: scale(1.12); opacity: 1; }
+
+  .isi {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background: #fff;
+    border-radius: 16px;
+    padding: 4% 4% 2%;
+    overflow: hidden;
+    transition: opacity .4s ease, transform .4s ease;
+  }
+  .isi.out { opacity: 0; transform: scale(.95); }
+  .isi.in  { opacity: 1; transform: scale(1); }
+
+  .cap {
+    text-align: center;
+    font-size: clamp(1.3rem, 4.2vh, 2.3rem);
+    min-height: 1.4em;
+    letter-spacing: .5px;
+  }
+  .cap::after {
+    content: "";
+    display: inline-block;
+    width: 2px; height: .95em;
+    margin-left: 3px;
+    vertical-align: -2px;
+    background: #1c1c1c;
+    animation: kedip 1s steps(1) infinite;
+  }
+  @keyframes kedip { 50% { opacity: 0; } }
+
+  .art { display: flex; align-items: center; justify-content: center; min-height: 0; }
+  .art svg { width: 100%; height: 100%; filter: url(#coret); animation: muncul .5s ease-out; }
+  @keyframes muncul { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: none; } }
+
+  .dots { display: flex; justify-content: center; gap: 7px; padding-bottom: 2px; }
+  .dots i {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #c9cbd6;
+    transition: background .3s, transform .3s;
+  }
+  .dots i.on { background: #e11d2a; transform: scale(1.35); }
+
+  /* ===== Gaya garis doodle ===== */
+  .s { stroke: #1c1c1c; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+  .l { fill: #fff; stroke: #1c1c1c; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+  .n { fill: none; stroke: #1c1c1c; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+  .k { fill: #1c1c1c; }
+
+  /* ===== Animasi karakter ===== */
+  .bob, .bob2, .float, .pop, .jump, .tremble, .sob, .sway, .drip, .rain, .ray, .dot, .ring, .vib, .glow {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .bob    { animation: bob 2.2s ease-in-out infinite; }
+  .bob2   { animation: bob 2.8s ease-in-out infinite; }
+  .float  { animation: float 2.4s ease-in-out infinite; }
+  .pop    { animation: pop .5s .3s both, bob 1.4s 1s ease-in-out infinite; }
+  .jump   { animation: jump .8s ease-in-out infinite; }
+  .tremble{ animation: tremble .12s linear infinite; }
+  .sob    { transform-origin: 50% 100%; animation: sob .6s ease-in-out infinite; }
+  .sway   { transform-origin: 50% 100%; animation: sway 3s ease-in-out infinite; }
+  .drip   { animation: drip 1.6s ease-in infinite; }
+  .rain   { animation: rain 1s linear infinite; }
+  .ray    { animation: ray 1.2s ease-in-out infinite; }
+  .dot    { animation: dot 1.4s ease-in-out infinite; }
+  .ring   { animation: ring .35s steps(1) infinite; }
+  .vib    { animation: ring .25s steps(1) infinite; }
+  .glow   { animation: glow 1s ease-in-out infinite; }
+
+  @keyframes bob    { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  @keyframes float  { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-14px) scale(1.15); } }
+  @keyframes pop    { 0% { transform: scale(0); } 60% { transform: scale(1.25); } 100% { transform: scale(1); } }
+  @keyframes jump   { 0%,100% { transform: translateY(0); } 40% { transform: translateY(-22px); } 60% { transform: translateY(-22px); } }
+  @keyframes tremble{ 0% { transform: translate(-2px, 0) rotate(-.6deg); } 50% { transform: translate(2px, 1px) rotate(.6deg); } 100% { transform: translate(-2px, 0) rotate(-.6deg); } }
+  @keyframes sob    { 0%,100% { transform: translateY(0) rotate(0); } 25% { transform: translateY(-3px) rotate(-1.5deg); } 75% { transform: translateY(-3px) rotate(1.5deg); } }
+  @keyframes sway   { 0%,100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+  @keyframes drip   { 0% { transform: translateY(-4px); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(26px); opacity: 0; } }
+  @keyframes rain   { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(16px); opacity: 0; } }
+  @keyframes ray    { 0%,100% { opacity: .2; } 50% { opacity: 1; } }
+  @keyframes dot    { 0%,100% { opacity: .15; transform: scale(.7); } 40% { opacity: 1; transform: scale(1.2); } }
+  @keyframes ring   { 0% { opacity: 1; } 50% { opacity: 0; } }
+  @keyframes glow   { 0%,100% { fill: #bfe3ff; } 50% { fill: #fff3a8; } }
+
+  /* ===== Tombol ===== */
+  .btn {
+    position: fixed;
     left: 50%; top: 50%;
     transform: translate(-50%, -50%);
-    padding: 14px 54px;
+    z-index: 5;
+    padding: 16px 60px;
     font-family: system-ui, "Segoe UI", sans-serif;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 700;
     letter-spacing: 3px;
     color: #fff;
-    background: #12256b;
+    background: linear-gradient(135deg, #ff6b8b, #ff3d6e);
     border: none;
     border-radius: 999px;
     cursor: pointer;
-    z-index: 5;
-    box-shadow: 0 0 0 0 rgba(18, 37, 107, .6);
+    box-shadow: 0 8px 24px rgba(255, 61, 110, .4);
     animation: pulse 2s infinite;
     transition: opacity .5s ease, transform .4s ease;
   }
-  .btn:hover { transform: translate(-50%, -50%) scale(1.07); }
-  .btn.hide {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(.6);
-    pointer-events: none;
-    animation: none;
-  }
+  .btn:hover { transform: translate(-50%, -50%) scale(1.08); }
+  .btn.hide { opacity: 0; transform: translate(-50%, -50%) scale(.6); pointer-events: none; animation: none; }
   @keyframes pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(18, 37, 107, .55); }
-    70%  { box-shadow: 0 0 0 22px rgba(18, 37, 107, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(18, 37, 107, 0); }
+    0%   { box-shadow: 0 8px 24px rgba(255, 61, 110, .4), 0 0 0 0 rgba(255, 61, 110, .5); }
+    70%  { box-shadow: 0 8px 24px rgba(255, 61, 110, .4), 0 0 0 24px rgba(255, 61, 110, 0); }
+    100% { box-shadow: 0 8px 24px rgba(255, 61, 110, .4), 0 0 0 0 rgba(255, 61, 110, 0); }
   }
 
   .btn.ulang {
-    top: auto; bottom: 22px;
+    top: auto; bottom: 18px;
     transform: translate(-50%, 0);
     padding: 8px 24px;
-    font-size: .85rem;
+    font-size: .9rem;
     letter-spacing: 1px;
-    background: rgba(18, 37, 107, .85);
+    background: #6b6d75;
+    box-shadow: none;
     animation: none;
     opacity: 0;
     pointer-events: none;
   }
   .btn.ulang.show { opacity: 1; pointer-events: auto; }
-  .btn.ulang:hover { transform: translate(-50%, 0) scale(1.07); }
-
-  /* Progress titik */
-  .dots {
-    position: absolute;
-    top: 14px; left: 0; right: 0;
-    display: flex; justify-content: center; gap: 6px;
-    z-index: 4;
-  }
-  .dots i {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: rgba(0, 0, 0, .25);
-    transition: background .3s, transform .3s;
-  }
-  .dots i.on { background: #12256b; transform: scale(1.3); }
+  .btn.ulang:hover { transform: translate(-50%, 0) scale(1.08); }
 </style>
 </head>
 <body>
 
-<div class="paper" id="paper">
+<!-- filter supaya garis terlihat seperti coretan tangan -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="coret">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3.2"/>
+  </filter>
+</svg>
+
+<button class="btn" id="btnMulai">MULAI</button>
+
+<div class="card" id="card">
+  <div class="label">This is me &lt;3</div>
+  <button class="fs" id="btnFs" title="Layar penuh">⛶</button>
+  <div class="isi in" id="isi">
+    <div class="cap" id="cap"></div>
+    <div class="art" id="art"></div>
+  </div>
   <div class="dots" id="dots"></div>
-  <button class="btn" id="btnMulai">MULAI</button>
-  <button class="btn ulang" id="btnUlang">↻ Ulangi</button>
 </div>
 
+<button class="btn ulang" id="btnUlang">↻ Ulangi</button>
 
+<!-- Browser TIDAK bisa memutar .mid. Pakai MP3, taruh satu folder dengan file html ini -->
 <audio id="lagu" src="rabbit.mp3" preload="auto" loop></audio>
 
 <script>
-  
-  const slides = [
-    { t: "I met" },
-    { t: "a girl" },
-    { t: "with" },
-    { t: "a beautiful heart," },
-    { t: "beautiful eyes," },
-    { t: "beautiful smile," },
-    { t: "beautiful soul...," },
-    { t: "and" },
-    { t: "unforgettable charm." },
-    { t: "Who is that girl?" },
-    { t: "She is you ", merah: true, heart: true }
+  // ============================================================
+  //  PEMBANTU GAMBAR (karakter doodle)
+  // ============================================================
+  const HEARTPATH = "M0 -4 C-8 -16 -24 -4 0 14 C24 -4 8 -16 0 -4Z";
+
+  const heart = (x, y, s, d, c = "#e53950") =>
+    `<g transform="translate(${x} ${y}) scale(${s})"><g class="float" style="animation-delay:${d}s">
+       <path d="${HEARTPATH}" fill="${c}" stroke="#1c1c1c" stroke-width="2.5" stroke-linejoin="round"/>
+     </g></g>`;
+
+  const head = (cx, cy, r) =>
+    `<circle class="l" cx="${cx}" cy="${cy}" r="${r}"/>
+     <path class="n" d="M${cx - 4} ${cy - r + 1} q-3 -12 8 -15"/>`;
+
+  const SHADOW = (y = 270, rx = 64) =>
+    `<ellipse cx="150" cy="${y}" rx="${rx}" ry="7" fill="#000" opacity=".08"/>`;
+
+  const BADAN = `<path class="l" d="M114 172 q-8 46 4 86 h64 q12 -40 4 -86"/>`;
+
+  // lengan + HP + tangan (HP di depan perut)
+  const MEGANG = (glow) =>
+    `<path class="n" d="M116 186 q-10 26 18 42"/><path class="n" d="M184 186 q10 26 -18 42"/>
+     <g transform="translate(150 216)">
+       <rect class="l" x="-14" y="-21" width="28" height="42" rx="6"/>
+       <rect class="${glow ? "glow" : ""}" x="-10" y="-16" width="20" height="30" rx="3" fill="${glow ? "#bfe3ff" : "#e6e7ec"}"/>
+     </g>
+     <circle class="l" cx="136" cy="230" r="7"/><circle class="l" cx="164" cy="230" r="7"/>`;
+
+  const CY = 122; // tinggi pusat kepala untuk adegan yang memegang HP
+
+  // ============================================================
+  //  ADEGAN
+  // ============================================================
+
+  // 1. Memikirkan kamu
+  const adegan1 = () => `
+    ${SHADOW()}${BADAN}
+    <path class="n" d="M104 160 q-12 24 8 38"/><path class="n" d="M196 160 q12 24 -8 38"/>
+    <g class="bob">
+      ${head(150, 125, 52)}
+      <path class="n" d="M122 118 q9 -11 18 0"/><path class="n" d="M160 118 q9 -11 18 0"/>
+      <ellipse cx="117" cy="138" rx="9" ry="6" fill="#ff8fa3" opacity=".75"/>
+      <ellipse cx="183" cy="138" rx="9" ry="6" fill="#ff8fa3" opacity=".75"/>
+      <path class="n" d="M143 140 q7 7 14 0"/>
+      <ellipse class="l" cx="100" cy="150" rx="13" ry="11"/>
+      <ellipse class="l" cx="200" cy="150" rx="13" ry="11"/>
+    </g>
+    ${heart(62, 70, 1, 0)}${heart(242, 82, .9, .5)}${heart(262, 150, .7, 1)}`;
+
+  // 2. Tanpa kamu
+  const adegan2 = () => `
+    ${SHADOW(262, 70)}
+    <g class="bob2">
+      <path class="s" fill="#e4eaf2" d="M104 86 q-18 0 -16 -15 q2 -13 18 -10 q7 -15 24 -8 q13 -9 26 2 q18 -2 18 13 q0 18 -20 18 z"/>
+    </g>
+    <g class="rain" style="animation-delay:0s"><line class="n" style="stroke:#7cc4ff" x1="110" y1="96" x2="110" y2="104"/></g>
+    <g class="rain" style="animation-delay:.35s"><line class="n" style="stroke:#7cc4ff" x1="138" y1="98" x2="138" y2="106"/></g>
+    <g class="rain" style="animation-delay:.7s"><line class="n" style="stroke:#7cc4ff" x1="164" y1="96" x2="164" y2="104"/></g>
+    <g class="sway">
+      <path class="l" d="M112 184 q-14 44 6 72 h64 q20 -28 6 -72 z"/>
+      ${head(150, 150, 40)}
+      <path class="n" d="M114 232 q36 -26 72 0"/>
+      <path class="n" d="M114 204 q-6 20 12 30"/><path class="n" d="M186 204 q6 20 -12 30"/>
+      <circle class="k" cx="136" cy="150" r="3.6"/><circle class="k" cx="164" cy="150" r="3.6"/>
+      <path class="n" d="M141 168 q9 -7 18 0"/>
+      <g class="drip"><path class="s" fill="#7cc4ff" d="M168 156 q-6 9 0 12 q6 -3 0 -12z"/></g>
+    </g>`;
+
+  // 3. Ngobrol denganmu
+  const adegan3 = () => {
+    const rays = [-165, -135, -105, -75, -45, -15].map((a, i) => {
+      const r = a * Math.PI / 180;
+      const x1 = 150 + 68 * Math.cos(r), y1 = CY + 68 * Math.sin(r);
+      const x2 = 150 + 84 * Math.cos(r), y2 = CY + 84 * Math.sin(r);
+      return `<g class="ray" style="animation-delay:${i * .15}s"><line class="n" x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"/></g>`;
+    }).join("");
+    return `
+      ${SHADOW()}${rays}${BADAN}${MEGANG(true)}
+      <g class="bob">
+        ${head(150, CY, 50)}
+        <path class="n" d="M122 115 q9 -11 18 0"/><path class="n" d="M160 115 q9 -11 18 0"/>
+        <path class="s" fill="#ff8fa3" d="M134 134 q16 22 32 0 z"/>
+      </g>
+      <circle class="l" cx="226" cy="84" r="3.5"/>
+      <g class="pop">
+        <circle class="l" cx="252" cy="52" r="19"/>
+        <g transform="translate(252 55) scale(.55)"><path d="${HEARTPATH}" fill="#e53950" stroke="#1c1c1c" stroke-width="3" stroke-linejoin="round"/></g>
+      </g>`;
+  };
+
+  // 4. Menunggu pesanmu
+  const adegan4 = () => `
+    ${SHADOW()}${BADAN}${MEGANG(false)}
+    <g class="bob">
+      ${head(150, CY, 50)}
+      <ellipse class="k" cx="131" cy="119" rx="11" ry="14"/><ellipse class="k" cx="169" cy="119" rx="11" ry="14"/>
+      <circle cx="134" cy="113" r="3.5" fill="#fff"/><circle cx="172" cy="113" r="3.5" fill="#fff"/>
+      <path class="n" d="M143 147 h14"/>
+    </g>
+    <circle class="l" cx="200" cy="92" r="4"/><circle class="l" cx="211" cy="82" r="6.5"/>
+    <circle class="l" cx="250" cy="48" r="30"/>
+    <circle class="k dot" cx="236" cy="48" r="4.5" style="animation-delay:0s"/>
+    <circle class="k dot" cx="250" cy="48" r="4.5" style="animation-delay:.35s"/>
+    <circle class="k dot" cx="264" cy="48" r="4.5" style="animation-delay:.7s"/>`;
+
+  // 5. Dapat notifikasi
+  const adegan5 = () => `
+    <ellipse cx="150" cy="270" rx="64" ry="7" fill="#000" opacity=".08"/>
+    <g class="jump">
+      ${BADAN}${MEGANG(true)}
+      ${head(150, CY, 50)}
+      <circle class="l" cx="130" cy="118" r="13"/><circle class="k" cx="132" cy="120" r="5.5"/>
+      <circle class="l" cx="170" cy="118" r="13"/><circle class="k" cx="168" cy="120" r="5.5"/>
+      <ellipse class="s" fill="#7a2a3a" cx="150" cy="148" rx="6" ry="8"/>
+      <path class="n" d="M150 62 v-12"/><path class="n" d="M126 68 l-8 -10"/><path class="n" d="M174 68 l8 -10"/>
+      <g class="ring">
+        <path class="n" d="M112 200 l-12 -6"/><path class="n" d="M108 216 h-14"/>
+        <path class="n" d="M188 200 l12 -6"/><path class="n" d="M192 216 h14"/>
+      </g>
+    </g>
+    <g class="pop">
+      <circle class="l" cx="246" cy="62" r="24"/>
+      <path class="n" style="stroke:#e53950;stroke-width:5" d="M246 50 v14"/>
+      <circle cx="246" cy="76" r="3.2" fill="#e53950"/>
+    </g>`;
+
+  // 6. Kamu berhenti membalas
+  const adegan6 = () => `
+    ${SHADOW()}
+    <g class="tremble">
+      ${BADAN}${MEGANG(false)}
+      ${head(150, CY, 50)}
+      <circle class="l" cx="129" cy="118" r="15"/><circle class="k" cx="129" cy="119" r="9"/><circle cx="126" cy="115" r="3" fill="#fff"/>
+      <circle class="l" cx="171" cy="118" r="15"/><circle class="k" cx="171" cy="119" r="9"/><circle cx="168" cy="115" r="3" fill="#fff"/>
+      <path class="n" d="M138 148 q4 -5 8 0 t8 0 t8 0"/>
+      <g class="drip"><path class="s" fill="#7cc4ff" d="M206 88 q-7 11 0 15 q7 -4 0 -15z"/></g>
+    </g>
+    <g class="vib"><path class="n" d="M88 98 q-12 22 0 44"/><path class="n" d="M74 90 q-18 30 0 60"/></g>
+    <g class="vib"><path class="n" d="M212 98 q12 22 0 44"/><path class="n" d="M226 90 q18 30 0 60"/></g>`;
+
+  // 7. Kamu mengabaikanku
+  const adegan7 = () => `
+    <ellipse cx="150" cy="256" rx="110" ry="8" fill="#000" opacity=".08"/>
+    <g class="sob">
+      <rect class="l" x="35" y="158" width="150" height="86" rx="28" transform="rotate(-5 110 200)"/>
+      <ellipse class="l" cx="205" cy="222" rx="62" ry="28" transform="rotate(-4 205 222)"/>
+      <circle class="l" cx="125" cy="178" r="42"/>
+      <path class="n" d="M121 137 q-3 -12 8 -15"/>
+      <path class="n" d="M108 165 l14 8 l-14 8"/><path class="n" d="M152 165 l-14 8 l14 8"/>
+      <path class="n" d="M117 198 q6 -6 12 0 t12 0"/>
+      <path class="n" style="stroke:#7cc4ff;stroke-width:4" d="M110 183 q-5 10 -2 20"/>
+      <path class="n" style="stroke:#7cc4ff;stroke-width:4" d="M150 183 q5 10 2 20"/>
+      <g class="drip"><path class="s" fill="#7cc4ff" d="M106 206 q-6 9 0 12 q6 -3 0 -12z"/></g>
+      <g class="drip" style="animation-delay:.8s"><path class="s" fill="#7cc4ff" d="M154 206 q-6 9 0 12 q6 -3 0 -12z"/></g>
+    </g>
+    ${heart(72, 98, .7, 0)}${heart(196, 82, .8, .7)}${heart(250, 130, .55, 1.2)}`;
+
+  // ============================================================
+  //  ISI CERITA — EDIT CAPTION DI SINI
+  // ============================================================
+  const adegan = [
+    { t: "Me thinking about you",        svg: adegan1 },
+    { t: "Me without you :",             svg: adegan2 },
+    { t: "Me talking with you :",        svg: adegan3 },
+    { t: "Me waiting for your message .", svg: adegan4 },
+    { t: "Me when I received a noti .",  svg: adegan5 },
+    { t: "Me when you stop talking .",   svg: adegan6 },
+    { t: "Me when you ignored me .",     svg: adegan7 }
   ];
 
-  const TAHAN = 1400;   
-  const AKHIR = 1000;   
+  const TAHAN = 2800;  // lama adegan diam setelah caption selesai (ms)
+  const KETIK = 60;    // kecepatan mengetik per huruf (ms)
+  const GANTI = 450;   // lama transisi antar adegan (ms)
 
-  const paper = document.getElementById("paper");
+  // ============================================================
+  //  KONTROL
+  // ============================================================
+  const card = document.getElementById("card");
+  const isi = document.getElementById("isi");
+  const cap = document.getElementById("cap");
+  const art = document.getElementById("art");
+  const dots = document.getElementById("dots");
   const btnMulai = document.getElementById("btnMulai");
   const btnUlang = document.getElementById("btnUlang");
-  const dots = document.getElementById("dots");
+  const btnFs = document.getElementById("btnFs");
+  const lagu = document.getElementById("lagu");
+
   let timers = [];
-  let els = [];
+  let typer = null;
+  let fadeTimer = null;
 
-  
-  slides.forEach((s, i) => {
-    const el = document.createElement("div");
-    el.className = "slide" + (s.merah ? " merah" : "");
-    const dur = s.dur || Math.max(.7, s.t.length * 0.07);
-    el.style.setProperty("--durasi", dur + "s");
-    el.innerHTML = "<span>" + s.t + (s.heart ? '<b class="heart">♥</b>' : "") + "</span>";
-    paper.insertBefore(el, btnMulai);
-    els.push({ el, dur });
+  adegan.forEach(() => dots.appendChild(document.createElement("i")));
+  const setDot = (i) => [...dots.children].forEach((d, k) => d.classList.toggle("on", k === i));
 
-    const d = document.createElement("i");
-    dots.appendChild(d);
-  });
-
-  function setDot(i) {
-    [...dots.children].forEach((d, k) => d.classList.toggle("on", k === i));
+  // hati melayang di latar
+  for (let i = 0; i < 16; i++) {
+    const h = document.createElement("span");
+    h.className = "bg-heart";
+    h.textContent = "♥";
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.fontSize = 14 + Math.random() * 28 + "px";
+    h.style.animationDuration = 9 + Math.random() * 10 + "s";
+    h.style.animationDelay = -Math.random() * 15 + "s";
+    document.body.appendChild(h);
   }
 
-  const lagu = document.getElementById("lagu");
-  const VOLUME = 0.8;      
-  const MULAI_DETIK = 0;   
-  let fadeTimer;
+  // ---------- musik ----------
+  const VOLUME = 0.8;      // 0 sampai 1
+  const MULAI_DETIK = 0;   // lagu mulai dari detik ke berapa
 
   function putarLagu() {
     clearInterval(fadeTimer);
-    lagu.currentTime = MULAI_DETIK;
+    try { lagu.currentTime = MULAI_DETIK; } catch (e) {}
     lagu.volume = 0;
-    lagu.play().catch(() => {}); 
-    
+    lagu.play().catch(() => {});
     fadeTimer = setInterval(() => {
       if (lagu.volume < VOLUME - 0.05) lagu.volume = Math.min(VOLUME, lagu.volume + 0.05);
       else { lagu.volume = VOLUME; clearInterval(fadeTimer); }
     }, 150);
   }
-
   function hentikanLagu() {
     clearInterval(fadeTimer);
     lagu.pause();
-    lagu.currentTime = MULAI_DETIK;
+    try { lagu.currentTime = MULAI_DETIK; } catch (e) {}
+  }
+
+  // ---------- layar penuh ----------
+  function toggleFs() {
+    const root = document.documentElement;
+    if (!document.fullscreenElement) { if (root.requestFullscreen) root.requestFullscreen().catch(() => {}); }
+    else if (document.exitFullscreen) document.exitFullscreen();
+  }
+  btnFs.addEventListener("click", toggleFs);
+
+  // ---------- adegan ----------
+  function ketik(teks) {
+    clearInterval(typer);
+    let k = 0;
+    typer = setInterval(() => {
+      cap.textContent = teks.slice(0, ++k);
+      if (k >= teks.length) clearInterval(typer);
+    }, KETIK);
+  }
+
+  function tampil(i) {
+    isi.classList.remove("in");
+    isi.classList.add("out");
+    timers.push(setTimeout(() => {
+      art.innerHTML = '<svg viewBox="0 0 300 290" xmlns="http://www.w3.org/2000/svg">' + adegan[i].svg() + "</svg>";
+      cap.textContent = "";
+      setDot(i);
+      isi.classList.remove("out");
+      isi.classList.add("in");
+      ketik(adegan[i].t);
+    }, i === 0 ? 0 : GANTI));
   }
 
   function mulai() {
-    
     const root = document.documentElement;
-    if (!document.fullscreenElement && root.requestFullscreen) {
-      root.requestFullscreen().catch(() => {});
-    }
+    if (!document.fullscreenElement && root.requestFullscreen) root.requestFullscreen().catch(() => {});
     putarLagu();
     btnMulai.classList.add("hide");
     btnUlang.classList.remove("show");
+    card.classList.add("tampil");
 
-    let waktu = 600;
-    els.forEach((o, i) => {
-      timers.push(setTimeout(() => {
-        // slide sebelumnya keluar
-        if (i > 0) {
-          els[i - 1].el.classList.remove("aktif");
-          els[i - 1].el.classList.add("keluar");
-        }
-        setDot(i);
-        o.el.classList.remove("keluar");
-        o.el.classList.add("aktif");
-      }, waktu));
-
-      const terakhir = i === els.length - 1;
-      waktu += o.dur * 1000 + (terakhir ? 0 : TAHAN) + (terakhir ? 0 : AKHIR - 1000 + 0);
+    let waktu = 700;
+    adegan.forEach((a, i) => {
+      timers.push(setTimeout(() => tampil(i), waktu));
+      waktu += GANTI + a.t.length * KETIK + TAHAN;
     });
-
-    timers.push(setTimeout(() => btnUlang.classList.add("show"), waktu + 1200));
+    timers.push(setTimeout(() => btnUlang.classList.add("show"), waktu));
   }
 
   function ulang() {
     hentikanLagu();
     timers.forEach(clearTimeout);
     timers = [];
-    els.forEach(o => o.el.classList.remove("aktif", "keluar"));
-    setDot(-1);
+    clearInterval(typer);
+    card.classList.remove("tampil");
     btnUlang.classList.remove("show");
+    setTimeout(() => { art.innerHTML = ""; cap.textContent = ""; setDot(-1); }, 600);
     btnMulai.classList.remove("hide");
   }
 
